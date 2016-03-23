@@ -1,0 +1,37 @@
+{% extends 'admin/master.html' %}
+{% import 'admin/lib.html' as lib with context %}
+
+{% macro extra() %}
+  <input name="_add_another" type="submit" class="btn btn-large" value="{{ _gettext('Save and Add') }}" />
+{% endmacro %}
+
+{% block head %}
+    {{ super() }}
+    {{ lib.form_css() }}
+{% endblock %}
+
+{% block body %}
+    <section class="content-header">
+        <h1>{{ admin_view.name }} <small>{{ _gettext('Creating') }}</small></h1>
+        {% block navlinks %}{% endblock %}
+        {% block breadcrumb %}
+            <ol class="breadcrumb">
+                <li><a href="{{ admin_view.admin.index_view.url }}"><i class="fa fa-home"></i>{{ _gettext('Home') }}</a></li>
+                <li><a href="{{ admin_view.url }}"><i class="fa fa-list"></i>{{ admin_view.name }} {{ _gettext('List') }}</a></li>
+                <li class="active">Creating</li>
+            </ol>
+        {% endblock %}
+    </section>
+    <section class="content">
+        <div class="row">
+            {% call lib.form_tag(form) %}
+                {{ lib.render_form(form, return_url, form_opts=form_opts, extra=extra()) }}
+            {% endcall %}
+        </div>
+    </section>
+{% endblock %}
+
+{% block tail %}
+  {{ super() }}
+  {{ lib.form_js() }}
+{% endblock %}

@@ -1,0 +1,2 @@
+recursive-include flask_admin_lte/templates *.html
+recursive-include flask_admin_lte/static *.js *.css
