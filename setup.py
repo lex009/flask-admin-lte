@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='flask-lte-admin',
+    name='flask-admin-lte',
     packages=find_packages(),
     version='0.2',
     description='Integrates LteAdmin into flask-admin',
