@@ -1,3 +1,4 @@
 {
 	"directory": "flask_admin_lte/static/vendor"
+  	"allow_root": true
 }
