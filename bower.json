@@ -14,7 +14,7 @@
     "tests"
   ],
   "dependencies": {
-    "admin-lte": "~2.2.0",
+    "admin-lte": "~2.3",
     "moment": "~2.10.6"
   }
 }
