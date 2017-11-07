@@ -14,9 +14,8 @@ def lte(app: Flask):
             blueprint.jinja_loader,
         ])
 
-    @app.template_filter('if_exists')
-    def if_exists(filename):
-        if os.path.isfile('{}{}'.format(app.root_path, filename)):
-            return filename
+    @app.template_filter('vars')
+    def _vars(obj):
+        return vars(obj)
 
     app.register_blueprint(Blueprint('admin_lte', __name__, static_folder='static', static_url_path='/static/lte'))
