@@ -100,38 +100,47 @@
 {# ---------------------- Forms -------------------------- #}
 {% macro render_field(form, field, kwargs={}, caller=None) %}
   {% set direct_error = h.is_field_error(field.errors) %}
-  <div class="form-group{{ ' has-error' if direct_error else '' }}">
-    <label for="{{ field.id }}" class="control-label">{{ field.label.text }}
-        {% if h.is_required_form_field(field) %}
-          <strong style="color: red">&#42;</strong>
-        {%- else -%}
-          &nbsp;
-        {%- endif %}
-    </label>
-
-      {% if field.widget.input_type != 'checkbox' and not field.unbound_field is defined %}
-        {% set _dummy = kwargs.setdefault('class', 'form-control') %}
-      {% endif %}
-      {{ field(**kwargs)|safe }}
-      {% if field.description %}
-      <p class="help-block">{{ field.description }}</p>
-      {% endif %}
-      {% if direct_error %}
-        <ul class="help-block input-errors">
-        {% for e in field.errors if e is string %}
-          <li>{{ e }}</li>
-        {% endfor %}
-        </ul>
-      {% endif %}
-
-    {% if caller %}
-      {{ caller(form, field, direct_error, kwargs) }}
-    {% endif %}
+  <div class="box-body">
+      <div class="form-group{{ ' has-error' if direct_error else '' }}">
+          <label for="{{ field.id }}" class="control-label">{{ field.label.text }}
+              {% if h.is_required_form_field(field) %}
+                <strong style="color: red">&#42;</strong>
+              {%- else -%}
+                &nbsp;
+              {%- endif %}
+          </label>
+    
+          {% if field.widget.input_type != 'checkbox' and not field.unbound_field is defined %}
+            {% set _dummy = kwargs.setdefault('class', 'form-control') %}
+          {% endif %}
+          {{ field(**kwargs)|safe }}
+          {% if field.description %}
+              <p class="help-block">{{ field.description }}</p>
+          {% endif %}
+          {% if direct_error %}
+              <ul class="help-block input-errors">
+                  {% for e in field.errors if e is string %}
+                     <li>{{ e }}</li>
+                  {% endfor %}
+              </ul>
+          {% endif %}
+          {% if caller %}
+              {{ caller(form, field, direct_error, kwargs) }}
+          {% endif %}
+      </div>
   </div>
 {% endmacro %}
 
-{% macro render_header(form, text) %}
-    <h3>{{ text }}</h3>
+{% macro render_header(form, text, collapsed) %}
+    <h3 class="box-title">{{ text }}</h3>
+{% endmacro %}
+
+{% macro render_collapsable_header(form, text, collapsed) %}
+    <div data-widget="collapse" style="cursor: pointer">
+        <div class="box-header with-border">
+            <h3 class="box-title">{{ text }}</h3>
+        </div>
+    </div>
 {% endmacro %}
 
 {% macro render_form_fields(form, form_opts=None) %}
@@ -153,14 +162,13 @@
                 {% endfor %}
             {% else %}
                 {% for f in form if f.widget.input_type != 'hidden' %}
-                {% if form_opts %}
-                    {% set kwargs = form_opts.widget_args.get(f.name, {}) %}
-                {% else %}
-                    {% set kwargs = {} %}
-                {% endif %}
+                    {% if form_opts %}
+                        {% set kwargs = form_opts.widget_args.get(f.name, {}) %}
+                    {% else %}
+                        {% set kwargs = {} %}
+                    {% endif %}
                     {{ render_field(form, f, kwargs) }}
-                {% endfor %}
-
+		{% endfor %}
             {% endif %}
         </div>
     </div>
@@ -168,20 +176,20 @@
 
 {% macro form_tag(form=None, action=None) %}
     <form action="{{ action or '' }}" method="POST" role="form" class="admin-form" enctype="multipart/form-data">
-      {{ caller() }}
+        {{ caller() }}
     </form>
 {% endmacro %}
 
 {% macro render_form_buttons(cancel_url, extra=None) %}
+    <input type="submit" class="btn btn-primary" value="{{ _gettext('Save') }}" />
 
-        <input type="submit" class="btn btn-primary" value="{{ _gettext('Save') }}" />
-        {% if extra %}
+    {% if extra %}
         {{ extra }}
-        {% endif %}
-        {% if cancel_url %}
-        <a href="{{ cancel_url }}" class="btn btn-danger" role="button">{{ _gettext('Cancel') }}</a>
-        {% endif %}
+    {% endif %}
 
+    {% if cancel_url %}
+        <a href="{{ cancel_url }}" class="btn btn-danger" role="button">{{ _gettext('Cancel') }}</a>
+    {% endif %}
 {% endmacro %}
 
 {% macro render_form(form, cancel_url, extra=None, form_opts=None, action=None, has_menu=False) -%}
@@ -201,29 +209,43 @@
         {% else %}
             <div class="col-md-12">
         {% endif %}
-        <div class="box box-primary">
-            <div class="box-body">
-                {% if form_opts and form_opts.form_rules %}
-                    {% for r in form_opts.form_rules %}
-                        {{ r(form, form_opts=form_opts) }}
-                    {% endfor %}
-                {% else %}
-
-                {% for f in form if f.widget.input_type != 'hidden' %}
-                {% if form_opts %}
-                    {% set kwargs = form_opts.widget_args.get(f.name, {}) %}
-                {% else %}
-                    {% set kwargs = {} %}
-                {% endif %}
-                    {{ render_field(form, f, kwargs) }}
-                {% endfor %}
-                {% endif %}
-            </div>
-            <div class="box-footer">
-                {{ render_form_buttons(cancel_url, extra) }}
-            </div>
-        </div>
-            </div>
+	    {% if form_opts and form_opts.form_rules %}
+	    	{% set collapsable = 'collapsed' in form_opts.form_rules.rules[0]|vars %}
+		{% if not collapsable %}
+	    	<div class="box box-primary">
+                    <div class="box-body">
+		{% endif %}
+			{% for r in form_opts.form_rules %}
+			    {% if r['block'] %} 
+			        {% if r.begin %}
+				    <div class="box box-primary track-changes {% if r.collapsed %}collapsed-box{% endif %}">
+			        {% elif r.end %}
+				   </div>
+			        {% endif %}
+			    {% else %}
+			        {{ r(form, form_opts=form_opts) }}
+			    {% endif %}
+			{% endfor %}
+		{% if not collapsable %}
+		    </div>
+		</div>
+		{% endif %}
+            {% else %}
+	        <div class="box box-primary">
+                    <div class="box-body">
+                        {% for f in form if f.widget.input_type != 'hidden' %}
+                            {% if form_opts %}
+                                {% set kwargs = form_opts.widget_args.get(f.name, {}) %}
+                            {% else %}
+                                {% set kwargs = {} %}
+                            {% endif %}
+	    	        {{ render_field(form, f, kwargs) }}
+                        {% endfor %}
+	    	    </div>
+	        </div>
+            {% endif %}
+            {{ render_form_buttons(cancel_url, extra) }}
+	</div>
     {% endcall %}
 {% endmacro %}
 
@@ -267,5 +289,4 @@
 	    $(e.target).parents('.track-changes, .box-primary').removeClass('box-primary').addClass('box-warning')
 	})
   </script>
-
 {% endmacro %}
