@@ -210,6 +210,7 @@
             <div class="col-md-12">
         {% endif %}
 	    {% if form_opts and form_opts.form_rules %}
+
 	    	{% set collapsable = 'collapsed' in form_opts.form_rules.rules[0]|vars %}
 		{% if not collapsable %}
 	    	<div class="box box-primary">
@@ -230,6 +231,7 @@
 		    </div>
 		</div>
 		{% endif %}
+
             {% else %}
 	        <div class="box box-primary">
                     <div class="box-body">

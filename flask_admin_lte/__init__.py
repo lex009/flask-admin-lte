@@ -1,11 +1,10 @@
 __author__ = 'Alex Belyaev'
 __email__ = 'lex@alexbelyaev.com'
 
-from flask import Flask, Blueprint, url_for, request
+from flask import Flask, Blueprint
 from flask.helpers import get_root_path
 import jinja2
 import os
-
 
 def lte(app: Flask):
     for blueprint in app.blueprints.values():
@@ -13,7 +12,7 @@ def lte(app: Flask):
             jinja2.FileSystemLoader(os.path.join(get_root_path('flask_admin_lte'), 'templates/lte')),
             blueprint.jinja_loader,
         ])
-
+        
     @app.template_filter('vars')
     def _vars(obj):
         return vars(obj)
