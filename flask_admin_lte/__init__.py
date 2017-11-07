@@ -12,4 +12,9 @@ def lte(app: Flask):
             jinja2.FileSystemLoader(os.path.join(get_root_path('flask_admin_lte'), 'templates/lte')),
             blueprint.jinja_loader,
         ])
+        
+    @app.template_filter('vars')
+    def _vars(obj):
+        return vars(obj)
+
     app.register_blueprint(Blueprint('admin_lte', __name__, static_folder='static', static_url_path='/static/lte'))

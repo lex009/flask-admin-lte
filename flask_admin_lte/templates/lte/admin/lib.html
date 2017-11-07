@@ -210,17 +210,28 @@
             <div class="col-md-12">
         {% endif %}
 	    {% if form_opts and form_opts.form_rules %}
-                {% for r in form_opts.form_rules %}
-	        	{% if r['block'] %} 
-	    	    {% if r.begin %}
-	    	        <div class="box box-primary track-changes {% if r.collapsed %}collapsed-box{% endif %}">
-	    	    {% elif r.end %}
-	    	        </div>
-	    	    {% endif %}
-	    	{% else %}
-	    	    {{ r(form, form_opts=form_opts) }}
-	    	{% endif %}
-                {% endfor %}
+
+	    	{% set collapsable = 'collapsed' in form_opts.form_rules.rules[0]|vars %}
+		{% if not collapsable %}
+	    	<div class="box box-primary">
+                    <div class="box-body">
+		{% endif %}
+			{% for r in form_opts.form_rules %}
+			    {% if r['block'] %} 
+			        {% if r.begin %}
+				    <div class="box box-primary track-changes {% if r.collapsed %}collapsed-box{% endif %}">
+			        {% elif r.end %}
+				   </div>
+			        {% endif %}
+			    {% else %}
+			        {{ r(form, form_opts=form_opts) }}
+			    {% endif %}
+			{% endfor %}
+		{% if not collapsable %}
+		    </div>
+		</div>
+		{% endif %}
+
             {% else %}
 	        <div class="box box-primary">
                     <div class="box-body">
@@ -267,6 +278,7 @@
   <script src="{{ admin_static.url(filename='vendor/x-editable/js/bootstrap3-editable-1.5.1.min.js') }}"></script>
   {% endif %}
   <script src="{{ admin_static.url(filename='admin/js/form.js') }}"></script>
+
   <script>
 	$('.track-changes').change(function(e) {
 	    $(e.target).parents('.track-changes, .box-primary').removeClass('box-primary').addClass('box-warning')
