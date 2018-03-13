@@ -227,8 +227,7 @@
             <div class="col-md-12">
         {% endif %}
 	    {% if form_opts and form_opts.form_rules %}
-
-	        {% set collapsable = 'collapsed' in form_opts.form_rules.rules[0]|vars %}
+	      {% set collapsable = 'collapsed' in form_opts.form_rules.rules[0]|vars %}
 		    {% if not collapsable %}
 	        	<div class="box box-primary">
                         <div class="box-body">
@@ -251,15 +250,15 @@
 
         {% else %}
         <div class="box box-primary">
-                <div class="box-body">
-                    {% for f in form if f.widget.input_type != 'hidden' %}
-                        {% if form_opts %}
-                            {% set kwargs = form_opts.widget_args.get(f.name, {}) %}
-                        {% else %}
-                            {% set kwargs = {} %}
-                        {% endif %}
-    	        {{ render_field(form, f, kwargs) }}
-                    {% endfor %}
+            <div class="box-body">
+                {% for f in form if f.widget.input_type != 'hidden' %}
+                    {% if form_opts %}
+                        {% set kwargs = form_opts.widget_args.get(f.name, {}) %}
+                    {% else %}
+                        {% set kwargs = {} %}
+                    {% endif %}
+                    {{ render_field(form, f, kwargs) }}
+                {% endfor %}
     	    </div>
         </div>
         {% endif %}
@@ -294,14 +293,11 @@
   {% if editable_columns %}
   <script src="{{ admin_static.url(filename='vendor/x-editable/js/bootstrap3-editable.min.js', v='1.5.1.1') }}"></script>
   {% endif %}
-
   <script src="{{ admin_static.url(filename='admin/js/form.js') }}"></script>
 
   <script>
-	$('.track-changes').change(function(e) {
-	    $(e.target).parents('.track-changes, .box-primary').removeClass('box-primary').addClass('box-warning')
-	})
+      $('.track-changes').change(function(e) {
+          $(e.target).parents('.track-changes, .box-primary').removeClass('box-primary').addClass('box-warning')
+      })
   </script>
-
-
 {% endmacro %}

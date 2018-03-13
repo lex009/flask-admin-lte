@@ -54,3 +54,41 @@
     </div>
 </form>
 {% endmacro %}
+
+{% macro page_size_form(generator, btn_class='dropdown-toggle') %}
+    <div class="btn-group">
+	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+            {{ page_size }} {{ _gettext('items') }}<b style="margin-left: 7px" class="caret"></b>
+	</button>
+        <ul class="dropdown-menu">
+            <li><a href="{{ generator(20) }}">20 {{ _gettext('items') }}</a></li>
+            <li><a href="{{ generator(50) }}">50 {{ _gettext('items') }}</a></li>
+            <li><a href="{{ generator(100) }}">100 {{ _gettext('items') }}</a></li>
+        </ul>
+    </div>
+{% endmacro %}
+
+{% macro export_options(btn_class='dropdown-toggle') %}
+    {% if admin_view.export_types|length > 1 %}
+    <div class="btn-group">
+	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+            {{ _gettext('Export') }}<b style="margin-left: 7px" class="caret"></b>
+	</button>
+        <ul class="dropdown-menu field-filters">
+            {% for export_type in admin_view.export_types %}
+            <li>
+                <a href="{{ get_url('.export', export_type=export_type, **request.args) }}" title="{{ _gettext('Export') }}">{{ _gettext('Export') + ' ' + export_type|upper }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% else %}
+    <div class="btn-group">
+        <a class="btn btn-default dropdown-toggle" title="{{ _gettext('Export') }}"
+	   href="{{ get_url('.export', export_type=admin_view.export_types[0], **request.args) }}">
+	    {{ _gettext('Export') }}
+	</a>
+    </div>
+    {% endif %}
+{% endmacro %}
+

@@ -31,6 +31,11 @@
                             {% endif %}
 
                             <div class="box-tools">
+			        {% if admin_view.can_export %}
+			            {{ model_layout.export_options() }}
+			        {% endif %}
+
+			        {% block model_menu_bar_before_filters %}{% endblock %}
 
                                 {% if filters %}
                                     {{ model_layout.filter_options() }}
@@ -39,6 +44,10 @@
                                 {% if actions %}
                                     {{ actionlib.dropdown(actions) }}
                                 {% endif %}
+
+				{% if can_set_page_size %}
+				    {{ model_layout.page_size_form(page_size_url) }}
+				{% endif %}
 
                                 {% if search_supported %}
                                     {{ model_layout.search_form() }}
