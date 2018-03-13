@@ -97,6 +97,23 @@
 </ul>
 {%- endmacro %}
 
+{# ---------------------- Modal Window ------------------- #}
+{% macro add_modal_window(modal_window_id='fa_modal_window', modal_label_id='fa_modal_label') %}
+  <div class="modal fade" id="{{ modal_window_id }}" tabindex="-1" role="dialog" aria-labelledby="{{ modal_label_id }}">
+    <div class="modal-dialog" role="document">
+      {# bootstrap version > 3.1.0 required for this to work #}
+      <div class="modal-content">
+      </div>
+    </div>
+  </div>
+{% endmacro %}
+
+{% macro add_modal_button(url='', title='', content='', modal_window_id='fa_modal_window', btn_class='icon') %}
+  <a class="{{ btn_class }}" style="float:left; margin-right: 5px" data-target="#{{ modal_window_id }}" title="{{ title }}" href="{{ url }}" data-toggle="modal">
+    {{ content|safe }}
+  </a>
+{% endmacro %}
+
 {# ---------------------- Forms -------------------------- #}
 {% macro render_field(form, field, kwargs={}, caller=None) %}
   {% set direct_error = h.is_field_error(field.errors) %}
@@ -210,43 +227,42 @@
             <div class="col-md-12">
         {% endif %}
 	    {% if form_opts and form_opts.form_rules %}
-
-	    	{% set collapsable = 'collapsed' in form_opts.form_rules.rules[0]|vars %}
-		{% if not collapsable %}
-	    	<div class="box box-primary">
-                    <div class="box-body">
-		{% endif %}
-			{% for r in form_opts.form_rules %}
-			    {% if r['block'] %} 
-			        {% if r.begin %}
-				    <div class="box box-primary track-changes {% if r.collapsed %}collapsed-box{% endif %}">
-			        {% elif r.end %}
-				   </div>
+	      {% set collapsable = 'collapsed' in form_opts.form_rules.rules[0]|vars %}
+		    {% if not collapsable %}
+	        	<div class="box box-primary">
+                        <div class="box-body">
+		    {% endif %}
+			    {% for r in form_opts.form_rules %}
+			        {% if r['block'] %} 
+			            {% if r.begin %}
+				        <div class="box box-primary track-changes {% if r.collapsed %}collapsed-box{% endif %}">
+			            {% elif r.end %}
+				       </div>
+			            {% endif %}
+			        {% else %}
+			            {{ r(form, form_opts=form_opts) }}
 			        {% endif %}
-			    {% else %}
-			        {{ r(form, form_opts=form_opts) }}
-			    {% endif %}
-			{% endfor %}
-		{% if not collapsable %}
+			    {% endfor %}
+		    {% if not collapsable %}
+		        </div>
 		    </div>
-		</div>
-		{% endif %}
+		    {% endif %}
 
-            {% else %}
-	        <div class="box box-primary">
-                    <div class="box-body">
-                        {% for f in form if f.widget.input_type != 'hidden' %}
-                            {% if form_opts %}
-                                {% set kwargs = form_opts.widget_args.get(f.name, {}) %}
-                            {% else %}
-                                {% set kwargs = {} %}
-                            {% endif %}
-	    	        {{ render_field(form, f, kwargs) }}
-                        {% endfor %}
-	    	    </div>
-	        </div>
-            {% endif %}
-            {{ render_form_buttons(cancel_url, extra) }}
+        {% else %}
+        <div class="box box-primary">
+            <div class="box-body">
+                {% for f in form if f.widget.input_type != 'hidden' %}
+                    {% if form_opts %}
+                        {% set kwargs = form_opts.widget_args.get(f.name, {}) %}
+                    {% else %}
+                        {% set kwargs = {} %}
+                    {% endif %}
+                    {{ render_field(form, f, kwargs) }}
+                {% endfor %}
+    	    </div>
+        </div>
+        {% endif %}
+        {{ render_form_buttons(cancel_url, extra) }}
 	</div>
     {% endcall %}
 {% endmacro %}
@@ -280,8 +296,8 @@
   <script src="{{ admin_static.url(filename='admin/js/form.js') }}"></script>
 
   <script>
-	$('.track-changes').change(function(e) {
-	    $(e.target).parents('.track-changes, .box-primary').removeClass('box-primary').addClass('box-warning')
-	})
+      $('.track-changes').change(function(e) {
+          $(e.target).parents('.track-changes, .box-primary').removeClass('box-primary').addClass('box-warning')
+      })
   </script>
 {% endmacro %}
