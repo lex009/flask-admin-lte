@@ -14,8 +14,10 @@
     <section class="content-header">
         <h1>{{ admin_view.name }}</h1>
     </section>
-    {% block additional_content %}{% endblock %}
     <section class="content">
+        <div class="row">
+	    {% block additional_content %}{% endblock %}
+	</div>
         <div class="row">
             <div class="col-xs-12">
                 <div class="box box-primary">
