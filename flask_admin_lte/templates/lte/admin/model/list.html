@@ -16,8 +16,8 @@
     </section>
     <section class="content">
         <div class="row">
-	    {% block additional_content %}{% endblock %}
-	</div>
+        {% block additional_content %}{% endblock %}
+        </div>
         <div class="row">
             <div class="col-xs-12">
                 <div class="box box-primary">
@@ -25,19 +25,19 @@
                         {% block model_menu_bar %}
                             {% if admin_view.can_create %}
                                 <div class="box-title">
-                                <a class="btn btn-primary" href="{{ get_url('.create_view', url=return_url) }}" title="{{ _gettext('Create new record') }}">
-                                    <i class="fa fa-plus-circle"></i>
-                                    {{ _gettext('Create') }}
-                                </a>
+                                    <a class="btn btn-primary" href="{{ get_url('.create_view', url=return_url) }}" title="{{ _gettext('Create new record') }}">
+                                        <i class="fa fa-plus-circle"></i>
+                                        {{ _gettext('Create') }}
+                                    </a>
                                 </div>
                             {% endif %}
 
                             <div class="box-tools">
-			        {% if admin_view.can_export %}
-			            {{ model_layout.export_options() }}
-			        {% endif %}
+                            {% if admin_view.can_export %}
+                                {{ model_layout.export_options() }}
+                            {% endif %}
 
-			        {% block model_menu_bar_before_filters %}{% endblock %}
+                            {% block model_menu_bar_before_filters %}{% endblock %}
 
                                 {% if filters %}
                                     {{ model_layout.filter_options() }}
@@ -47,9 +47,9 @@
                                     {{ actionlib.dropdown(actions) }}
                                 {% endif %}
 
-				{% if can_set_page_size %}
-				    {{ model_layout.page_size_form(page_size_url) }}
-				{% endif %}
+                                {% if can_set_page_size %}
+                                    {{ model_layout.page_size_form(page_size_url) }}
+                                {% endif %}
 
                                 {% if search_supported %}
                                     {{ model_layout.search_form() }}
@@ -76,17 +76,18 @@
                                                 <input type="checkbox" name="rowtoggle" class="action-rowtoggle" title="{{ _gettext('Select all records') }}" />
                                             </th>
                                         {% endif %}
-					{% if admin_view.column_display_actions %}
+                                        {% if admin_view.column_display_actions %}
                                             {% block list_row_actions_header %}
                                             <th class="col-md-1">&nbsp;</th>
                                             {% endblock %}
-					{% endif %}
+                                        {% endif %}
                                         {% set column = 0 %}
                                         {% for c, name in list_columns %}
+                                        {% set current_column = loop.index0 %}
                                         <th class="column-header col-{{c}}">
                                             {% if admin_view.is_sortable(c) %}
-                                                {% if sort_column == column %}
-                                                    <a href="{{ sort_url(column, True) }}" title="{{ _gettext('Sort by %(name)s', name=name) }}">
+                                                {% if sort_column == current_column %}
+                                                    <a href="{{ sort_url(current_column, True) }}" title="{{ _gettext('Sort by %(name)s', name=name) }}">
                                                         {{ name }}
                                                         {% if sort_desc %}
                                                             <span class="fa fa-chevron-up glyphicon glyphicon-chevron-up"></span>
@@ -95,7 +96,7 @@
                                                         {% endif %}
                                                     </a>
                                                 {% else %}
-                                                    <a href="{{ sort_url(column) }}" title="{{ _gettext('Sort by %(name)s', name=name) }}">{{ name }}</a>
+                                                    <a href="{{ sort_url(current_column) }}" title="{{ _gettext('Sort by %(name)s', name=name) }}">{{ name }}</a>
                                                 {% endif %}
                                             {% else %}
                                                 {{ name }}
@@ -122,8 +123,8 @@
                                             <input type="checkbox" name="rowid" class="action-checkbox" value="{{ get_pk_value(row) }}" title="{{ _gettext('Select record') }}" />
                                         </td>
                                     {% endif %}
-				                    {% if admin_view.column_display_actions %}
-				                        {% block list_row_actions_column scoped %}
+                                    {% if admin_view.column_display_actions %}
+                                        {% block list_row_actions_column scoped %}
                                         <td class="list-buttons-column">
                                             {% block list_row_actions scoped %}
                                                 {%- if admin_view.can_view_details -%}
@@ -132,8 +133,8 @@
                                                 {%- endif -%}
                                                 {%- if admin_view.can_edit -%}
                                                 <a class="btn btn-primary btn-xs" style="float:left; margin-right:5px;"
-						                           href="{{ get_url('.edit_view', id=get_pk_value(row), url=return_url) }}"
-						                           title="{{ _gettext('Edit record') }}">
+                                                   href="{{ get_url('.edit_view', id=get_pk_value(row), url=return_url) }}"
+                                                   title="{{ _gettext('Edit record') }}">
                                                     <span class="fa fa-pencil glyphicon glyphicon-pencil"></span>
                                                 </a>
                                                 {%- endif -%}
@@ -234,27 +235,27 @@
             {% endif %}
         })(jQuery);
 
-	    (function($) {
-	        var y = (new Date()).getFullYear() + 1;
-	        var ys = Array(y - 2015).fill().map(function(_, ky) {
-	            return ky + 2016
-	        }).reverse();
+        (function($) {
+            var y = (new Date()).getFullYear() + 1;
+            var ys = Array(y - 2015).fill().map(function(_, ky) {
+                return ky + 2016
+            }).reverse();
 
-	        $('a[data-role="x-editable-combodate"]').click(function(event) {
-	            var $el = $(event.target);
+            $('a[data-role="x-editable-combodate"]').click(function(event) {
+                var $el = $(event.target);
 
-	            setTimeout(function() {
-	                var $sel = $('.combodate .year');
+                setTimeout(function() {
+                    var $sel = $('.combodate .year');
 
-	                $('option:first', $sel).after(
-	                    ys.map(function(ky) {
-	                        return $('<option value="' + ky + '">' + ky + '</option>')
-	                    })
-	                );
+                    $('option:first', $sel).after(
+                        ys.map(function(ky) {
+                            return $('<option value="' + ky + '">' + ky + '</option>')
+                        })
+                    );
 
-	                $sel.val((new Date($el.data('value'))).getFullYear());
-	            }, 100);
-	        });
-	    })(jQuery);
+                    $sel.val((new Date($el.data('value'))).getFullYear());
+                }, 100);
+            });
+        })(jQuery);
     </script>
 {% endblock %}
