@@ -12,7 +12,9 @@
 
 {% block body %}
     <section class="content-header">
-        <h1>{{ admin_view.name }}</h1>
+        {% block content_header %}
+            <h1>{{ admin_view.name }}</h1>
+        {% endblock %}
     </section>
     <section class="content">
         <div class="row">
