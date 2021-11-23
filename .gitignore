@@ -1,2 +1,4 @@
 flask_admin_lte/static/vendor
 node_modules
+venv
+.idea
