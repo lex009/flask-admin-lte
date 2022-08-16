@@ -8,11 +8,13 @@ import os
 
 def lte(app: Flask):
     for blueprint in app.blueprints.values():
-        blueprint.jinja_loader = jinja2.ChoiceLoader([
-            jinja2.FileSystemLoader(os.path.join(get_root_path('flask_admin_lte'), 'templates/lte')),
-            blueprint.jinja_loader,
-        ])
-        
+        original = blueprint.jinja_loader
+        choices = [jinja2.FileSystemLoader(os.path.join(get_root_path("flask_admin_lte"), "templates/lte"))]
+        # `original` loader may be None, which is unacceptable.
+        if original:
+            choices.append(blueprint.jinja_loader)
+        blueprint.jinja_loader = jinja2.ChoiceLoader(choices)
+
     @app.template_filter('vars')
     def _vars(obj):
         return vars(obj)

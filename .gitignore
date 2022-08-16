@@ -1,4 +1,6 @@
+build
 flask_admin_lte/static/vendor
+flask_admin_lte.egg-info
 node_modules
 venv
 .idea
